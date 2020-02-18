@@ -71,8 +71,11 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     FieldVarExp(id, _dotOperator, field) {
         return new FieldVarExp(id.ast(), field.ast());
     },
-    SubscriptedVarExp(id, _open, key, _close) {
+    VarExp_subscripted(id, _open, key, _close) {
         return new SubscriptedVarExp(id.ast(), key.ast());
+    },
+    VarExp_simple(id) {
+        return new IdentifierExpression((id.ast());
     },
     Param(id, _isKeyword, type) {
         return new Param(id.ast(), type.ast())
@@ -104,15 +107,38 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     Exp5_postfix(operand, op) {
         return new PostfixExpression(operand.ast(), op.ast());
     },
+    Exp5_parens(_1, expression, _2) {
+        return expression.ast();
+    },
+
     id(_1, _2) {
         return this.sourceString;
     },
     KeyValue(id, _, exp) {
         return new KeyValueExpression(id.ast(), exp.ast());
     },
+
     SimpleStmt_print(_displayKeyword, exp) {
         return SimpleStmt_Print(exp.ast());
-    }
+    },
+    Exp5_list(_1, expressions, _2) {
+        return new ListExpression(expressions.ast());
+    },
+    Exp5_set(_1, expressions, _2) {
+        return new SetExpression(expressions.ast());
+    },
+    Exp5_dict(_1, keyValue, _2) {
+        return new DictionaryExpression(keyValue.ast());
+    },
+    ListType(_1, type, _2) {
+        return new ListType(type.ast());
+    },
+    SetType(_1, type, _2) {
+        return new SetType(type.ast());
+    },
+    DictType(_1, keyType, _2, valueType, _3) {
+        return new DictType(keyType.ast(), valueType.ast());
+    },
     // SimpleStmt_return(_gimmeKeyword, exp) {
     //     if (!exp.ast()) {
     //         return new Return();

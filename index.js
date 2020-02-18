@@ -59,6 +59,11 @@ class FieldVarExp {
 
     }
 }
+class IdentifierExpression {
+    constructor(id) {
+        this.id = id;
+    }
+}
 
 class SubscriptedVarExp {
     constructor(id, key) {
@@ -125,6 +130,36 @@ class TextLiteral {
         this.value = value;
     }
 };
+class ListExpression {
+    constructor(members) {
+        this.members = members;
+    }
+}
+class DictExpression {
+    constructor(exp) {
+        Object.assign(this, { exp });
+    }
+}
+class SetExpression {
+    constructor(members) {
+        this.members = members;
+    }
+}
+class ListType {
+    constructor(memberType) {
+        Object.assign(this, { memberType });
+    }
+}
+class SetType {
+    constructor(memberType) {
+        Object.assign(this, { memberType });
+    }
+}
+class DictType {
+    constructor(keyType, valueType) {
+        Object.assign(this, { keyType, valueType });
+    }
+}
 
 // module.exports = {
 //     Program,
