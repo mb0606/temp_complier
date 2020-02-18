@@ -115,24 +115,15 @@ class Paren {
     }
 }
 
-class NumericLiteral {
-    constructor(value) {
-        this.value = value;
+
+class ListExpression {
+    constructor(members) {
+        this.members = members;
     }
 }
 class KeyValueExpression {
     constructor(key, value) {
         Object.assign(this, { key, value });
-    }
-}
-class TextLiteral {
-    constructor(value) {
-        this.value = value;
-    }
-};
-class ListExpression {
-    constructor(members) {
-        this.members = members;
     }
 }
 class DictExpression {
@@ -145,6 +136,7 @@ class SetExpression {
         this.members = members;
     }
 }
+// Types
 class ListType {
     constructor(memberType) {
         Object.assign(this, { memberType });
@@ -160,6 +152,30 @@ class DictType {
         Object.assign(this, { keyType, valueType });
     }
 }
+// literals
+class NumericLiteral {
+    constructor(value) {
+        this.value = value;
+    }
+}
+class TextLiteral {
+    constructor(value) {
+        this.value = value;
+    }
+};
+class BooleanLiteral {
+    constructor(value) {
+        this.value = value;
+    }
+}
+//////// Block
+// Should this be done in parser ? ask
+// class Block {
+//     constructor(statements) {
+//         // map or filter over every statement 
+//         this.statements = statements.filter();
+//     }
+// }
 
 // module.exports = {
 //     Program,

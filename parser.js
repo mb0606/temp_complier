@@ -37,10 +37,10 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     SimpleStmt_return(_, e) {
         return new ReturnStatement(arrayToNullable(e.ast()));
     },
-    // Block(open ,stmts, close) {
-    //     return new Block(stmts.ast());
-    // },
-
+    // Statements
+    Block(open, stmts, close) {
+        return new Block(stmts.ast());
+    },
     IfStmt_ternary(trueTest, _1, test, _2, falseTest) {
         return new TernaryExpression(test.ast(), trueTest.ast(), falseTest.ast());
     },
@@ -62,27 +62,33 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     FuncDec_ArrowFuncDec(id, _isKeyword, _alwaysKeyword, _open, params, _close, returnType, _arrowSymbol, body) {
         return new FuncDecStmt(id.ast(), params.ast(), returnType.ast(), body.ast());
     },
-    LetVarDeclaration(id, _isKeyword, type, exp) {
+
+    SimpleStmt_letdec(id, _isKeyword, type, exp) {
         return new VarDeclaration(id.ast(), type.ast(), exp.ast());
     },
-    ConstVarDeclaration(id, _isKeyword, _alwaysKeyword, type, exp) {
+    SimpleStmt_constdec(id, _isKeyword, _alwaysKeyword, type, exp) {
         return new VarDeclaration(id.ast(), type.ast(), exp.ast())
     },
-    FieldVarExp(id, _dotOperator, field) {
-        return new FieldVarExp(id.ast(), field.ast());
-    },
-    VarExp_subscripted(id, _open, key, _close) {
-        return new SubscriptedVarExp(id.ast(), key.ast());
-    },
-    VarExp_simple(id) {
-        return new IdentifierExpression((id.ast());
-    },
+
     Param(id, _isKeyword, type) {
         return new Param(id.ast(), type.ast())
     },
     Call(callName, _1, args, _2) {
         return new Call(callName.ast(), args.ast());
     },
+    id(_1, _2) {
+        return this.sourceString;
+    },
+
+    KeyValue(id, _, exp) {
+        return new KeyValueExpression(id.ast(), exp.ast());
+    },
+
+    SimpleStmt_print(_displayKeyword, exp) {
+        return SimpleStmt_Print(exp.ast());
+    },
+
+    // Expressions 
     Exp_or(left, op, right) {
         return new BinaryExpression(op.ast(), left.ast(), right.ast());
     },
@@ -98,28 +104,17 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     Exp3_binary(left, op, right) {
         return new BinaryExpression(op.ast(), left.ast(), right.ast());
     },
-    Pow(left, _powKeyword, right) {
-        return new PowExp(_powKeyword.ast(), left.ast(), right.ast());
-    },
     Exp5_prefix(op, operand) {
         return new PrefixExpression(op.ast(), operand.ast());
+    },
+    Exp4_binary(left, op, right) {
+        return new BinaryExpression(op.ast(), left.ast(), right.ast());
     },
     Exp5_postfix(operand, op) {
         return new PostfixExpression(operand.ast(), op.ast());
     },
     Exp5_parens(_1, expression, _2) {
         return expression.ast();
-    },
-
-    id(_1, _2) {
-        return this.sourceString;
-    },
-    KeyValue(id, _, exp) {
-        return new KeyValueExpression(id.ast(), exp.ast());
-    },
-
-    SimpleStmt_print(_displayKeyword, exp) {
-        return SimpleStmt_Print(exp.ast());
     },
     Exp5_list(_1, expressions, _2) {
         return new ListExpression(expressions.ast());
@@ -130,6 +125,17 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     Exp5_dict(_1, keyValue, _2) {
         return new DictionaryExpression(keyValue.ast());
     },
+    VarExp_field(id, _dotOperator, field) {
+        return new FieldVarExp(id.ast(), field.ast());
+    },
+    VarExp_subscripted(id, _open, key, _close) {
+        return new SubscriptedVarExp(id.ast(), key.ast());
+    },
+    VarExp_simple(id) {
+        return new IdentifierExpression(id.ast());
+    },
+
+    // Types
     ListType(_1, type, _2) {
         return new ListType(type.ast());
     },
@@ -138,6 +144,17 @@ const astGenerator = grammar.createSemantics().addOperation('ast', {
     },
     DictType(_1, keyType, _2, valueType, _3) {
         return new DictType(keyType.ast(), valueType.ast());
+    },
+
+    // literals
+    numlit(_1, _2, _3, _4, _5, _6) {
+        return new NumericLiteral(+this.sourceString);
+    },
+    txtlit(_1, chars, _2) {
+        return new StringLiteral(this.sourceString);
+    },
+    boollit(_) {
+        return new BooleanLiteral(this.sourceString === "true");
     },
     // SimpleStmt_return(_gimmeKeyword, exp) {
     //     if (!exp.ast()) {

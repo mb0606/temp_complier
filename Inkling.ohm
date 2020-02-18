@@ -46,7 +46,7 @@ Inkling {
         | Exp3
     Exp3 = Exp3 mulop Exp4    --binary
         | Exp4
-    Exp4 = Exp5 "^" Exp4      --pow
+    Exp4 = Exp5 "^" Exp4      --binary
         | Exp5
     Exp5 = prefixOp Exp6      --prefix
         |  Exp6 postfixOp     --postfix
